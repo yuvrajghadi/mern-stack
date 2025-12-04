@@ -73,13 +73,13 @@ const List = () => {
 
                 <div className="flex gap-2">
                   <Link to={`/update/${item._id}`}>
-                    <button className="px-3 py-1 text-xs font-semibold bg-yellow-500 text-white rounded-md hover:bg-yellow-600 active:scale-95 transition">
+                    <button className="px-3 py-1 text-xs font-semibold bg-yellow-500 text-white rounded-md hover:bg-yellow-600 active:scale-95 transition cursor-pointer">
                       Update
                     </button>
                   </Link>
 
                   <button
-                    className="px-3 py-1 text-xs font-semibold bg-red-500 text-white rounded-md hover:bg-red-600 active:scale-95 transition"
+                    className="px-3 py-1 text-xs font-semibold bg-red-500 text-white rounded-md hover:bg-red-600 active:scale-95 transition cursor-pointer"
                     onClick={() => handelBtn(item._id)}
                   >
                     Delete

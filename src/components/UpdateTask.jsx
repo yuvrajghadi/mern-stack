@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const UpdateTask = () => {
   const [textData, setTextData] = useState({
     title: "",
     description: ""
   });
+
+  const navigate = useNavigate();
 
   const { id } = useParams();
 
@@ -21,6 +23,23 @@ const UpdateTask = () => {
       setTextData(res.result);
     }
   };
+
+
+  const updateTask=async()=>{
+      console.log(textData);
+    let data = await fetch('http://localhost:3200/update-task',{
+      method:'put',
+      body:JSON.stringify(textData),
+      headers:{
+        'Content-Type': 'application/json'
+      }
+    })
+      data = await data.json()
+    
+    if (data) {
+   navigate('/')
+    }
+  }
 
 
     return (
@@ -53,8 +72,8 @@ const UpdateTask = () => {
 
       <button
         type="button"
-       
-        className="w-96 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition"
+       onClick={updateTask}
+        className="w-96 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition"
       >
         Update Task
       </button>
