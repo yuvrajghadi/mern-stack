@@ -6,36 +6,46 @@ const AddTask = () => {
     description: "",
   });
 
-  const [successMsg, setSuccessMsg] = useState(""); // ⭐ NEW
+  const [successMsg, setSuccessMsg] = useState("");
+  const [loading, setLoading] = useState(false); // ✅ prevent double submit
 
   const handleTexxtData = async () => {
-    // validation
+    // ✅ Validation
     if (!textData.title.trim() || !textData.description.trim()) {
       alert("Please enter both title and description");
       return;
     }
 
-    let res = await fetch("http://localhost:3200/add-task", {
-      method: "POST",
-            credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(textData),
-    });
+    try {
+      setLoading(true);
 
-    const msg = await res.text();
-    console.log("Server says:", msg);
+      let res = await fetch(
+        "https://todo-backend-rosy.vercel.app/add-task",
+        {
+          method: "POST",
+          credentials: "include", // ✅ REQUIRED
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(textData),
+        }
+      );
 
-    if (res.ok) {
-      // ⭐ Show message
-      setSuccessMsg("Task Added Successfully!");
+      let data = await res.json(); // ✅ Proper JSON handling
 
-      // reset input fields
-      setTextData({ title: "", description: "" });
+      if (data.success) {
+        setSuccessMsg("✅ Task Added Successfully!");
+        setTextData({ title: "", description: "" });
 
-      // ⭐ Hide msg after 3 seconds
-      setTimeout(() => setSuccessMsg(""), 3000);
+        setTimeout(() => setSuccessMsg(""), 3000);
+      } else {
+        alert("Failed to add task");
+      }
+    } catch (error) {
+      console.error("Add Task Error:", error);
+      alert("Server error while adding task");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -47,15 +57,15 @@ const AddTask = () => {
 
       <input
         type="text"
-        name="title"
         value={textData.title}
-        onChange={(e) => setTextData({ ...textData, title: e.target.value })}
+        onChange={(e) =>
+          setTextData({ ...textData, title: e.target.value })
+        }
         placeholder="Enter task title"
         className="w-96 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
       />
 
       <textarea
-        name="description"
         value={textData.description}
         onChange={(e) =>
           setTextData({ ...textData, description: e.target.value })
@@ -64,18 +74,24 @@ const AddTask = () => {
         rows="5"
         className="w-96 p-3 border rounded-md resize-y focus:outline-none focus:ring-2 focus:ring-blue-400"
       ></textarea>
- 
+
       <button
-        type="button"
         onClick={handleTexxtData}
-        className="w-96 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition"
+        disabled={loading}
+        className={`w-96 py-2 rounded-md transition text-white ${
+          loading
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-blue-600 hover:bg-blue-700"
+        }`}
       >
-        Add Task
+        {loading ? "Adding..." : "Add Task"}
       </button>
 
-      {/* ⭐ Success Message */}
+      {/* ✅ Success Message */}
       {successMsg && (
-        <p className="text-green-600 font-semibold mt-2">{successMsg}</p>
+        <p className="text-green-600 font-semibold mt-2">
+          {successMsg}
+        </p>
       )}
     </div>
   );

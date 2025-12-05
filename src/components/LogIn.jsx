@@ -1,89 +1,82 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
-import { Link,  useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-const SignUp = () => {
-  const [userData, setUserData] = useState({}); // ✅ safer for spreading
+const Login = () => {
+  const [userData, setUserData] = useState({});
   const navigate = useNavigate();
 
-  useEffect(()=>{
-    if (localStorage.getItem('user')) {
-      navigate('/')
+  useEffect(() => {
+    if (localStorage.getItem("user")) {
+      navigate("/");
     }
-  }, [])
+  }, [navigate]);
 
   const handleBtn = async () => {
-        console.log(userData);
-        let data = await fetch('http://localhost:3200/login', {
-            method: 'post',
-            body: JSON.stringify(userData),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        data = await data.json()
+    try {
+      let res = await await fetch("https://todo-backend-rosy.vercel.app/login", {
+  method: "POST",
+  credentials: "include", // ✅ THIS IS REQUIRED
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(userData),
+});
 
-        if (data.token) {
-            document.cookie = 'token=' + data.token
-            localStorage.setItem('user',userData.email)
-            window.dispatchEvent(new Event("storage"));
-          navigate('/')
-        }else{
-          alert('Please enter correct details')
-        }
+
+      let data = await res.json();
+
+      if (data.success) {
+        localStorage.setItem("user", userData.email); // ✅ only for UI
+        window.dispatchEvent(new Event("storage"));
+        navigate("/");
+      } else {
+        alert("Invalid email or password");
+      }
+    } catch (error) {
+      console.error("Login Error:", error);
+      alert("Server error during login");
     }
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-100 to-blue-200 px-4">
-      
-      {/* ✅ Card */}
       <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 flex flex-col gap-5">
-        
-        {/* ✅ Title */}
         <h1 className="text-3xl font-bold text-blue-700 text-center">
           Log In
         </h1>
+
         <p className="text-sm text-gray-500 text-center">
-          Log In to your account
+          Log in to your account
         </p>
 
-
-        {/* ✅ Email Input */}
         <input
-          type="text"
-          name="email"
-          onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+          type="email"
           placeholder="Enter your email"
-          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+          onChange={(e) =>
+            setUserData({ ...userData, email: e.target.value })
+          }
+          className="w-full p-3 border rounded-lg"
         />
 
-        {/* ✅ Password Input */}
         <input
           type="password"
-          name="password"
+          placeholder="Enter your password"
           onChange={(e) =>
             setUserData({ ...userData, password: e.target.value })
           }
-          placeholder="Enter your password"
-          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+          className="w-full p-3 border rounded-lg"
         />
 
-        {/* ✅ Sign Up Button */}
         <button
-          type="button"
           onClick={handleBtn}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition active:scale-95 shadow-md"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold"
         >
-          Sign Up
+          Log In
         </button>
 
-        {/* ✅ Redirect */}
         <p className="text-sm text-center text-gray-600">
           Don't have an account?{" "}
-          <Link
-            to="/signup"
-            className="text-blue-600 font-semibold hover:underline"
-          >
+          <Link to="/signup" className="text-blue-600 font-semibold hover:underline">
             Sign Up
           </Link>
         </p>
@@ -92,4 +85,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default Login;

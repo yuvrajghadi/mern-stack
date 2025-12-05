@@ -2,101 +2,97 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const SignUp = () => {
-    const [userData, setUserData] = useState({}); // ✅ safer for spreading
+  const [userData, setUserData] = useState({});
+  const navigate = useNavigate();
 
-const navigate = useNavigate();
-
-  useEffect(()=>{
-    if (localStorage.getItem('user')) {
-      navigate('/')
+  useEffect(() => {
+    if (localStorage.getItem("user")) {
+      navigate("/");
     }
-  }, [])
+  }, [navigate]);
 
-    const handleBtn = async () => {
-        console.log(userData);
-        let data = await fetch('http://localhost:3200/signup', {
-            method: 'post',
-            body: JSON.stringify(userData),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        data = await data.json()
-
-        
-        if (data.token) {
-            document.cookie = 'token=' + data.token
-            localStorage.setItem('user',userData.email)
-          navigate('/')
-        }else{
-          alert('Please enter correct details')
+  const handleBtn = async () => {
+    try {
+      let res = await fetch(
+        "https://todo-backend-rosy.vercel.app/signup",
+        {
+          method: "POST",
+          credentials: "include", // ✅ REQUIRED FOR COOKIES
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userData),
         }
+      );
+
+      let data = await res.json();
+
+      if (data.success) {
+        localStorage.setItem("user", userData.email); // ✅ Just for UI state
+        navigate("/");
+      } else {
+        alert("Signup failed");
+      }
+    } catch (error) {
+      console.error("Signup Error:", error);
+      alert("Server error during signup");
     }
-    return (
-        <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-100 to-blue-200 px-4">
+  };
 
-            {/* ✅ Card */}
-            <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 flex flex-col gap-5">
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-100 to-blue-200 px-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 flex flex-col gap-5">
+        <h1 className="text-3xl font-bold text-blue-700 text-center">
+          Create Account
+        </h1>
 
-                {/* ✅ Title */}
-                <h1 className="text-3xl font-bold text-blue-700 text-center">
-                    Create Account
-                </h1>
-                <p className="text-sm text-gray-500 text-center">
-                    Sign up to get started
-                </p>
+        <p className="text-sm text-gray-500 text-center">
+          Sign up to get started
+        </p>
 
-                {/* ✅ Name Input */}
-                <input
-                    type="text"
-                    name="name"
-                    onChange={(e) => setUserData({ ...userData, name: e.target.value })}
-                    placeholder="Enter your name"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-                />
+        <input
+          type="text"
+          placeholder="Enter your name"
+          onChange={(e) =>
+            setUserData({ ...userData, name: e.target.value })
+          }
+          className="w-full p-3 border rounded-lg"
+        />
 
-                {/* ✅ Email Input */}
-                <input
-                    type="text"
-                    name="email"
-                    onChange={(e) => setUserData({ ...userData, email: e.target.value })}
-                    placeholder="Enter your email"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-                />
+        <input
+          type="email"
+          placeholder="Enter your email"
+          onChange={(e) =>
+            setUserData({ ...userData, email: e.target.value })
+          }
+          className="w-full p-3 border rounded-lg"
+        />
 
-                {/* ✅ Password Input */}
-                <input
-                    type="password"
-                    name="password"
-                    onChange={(e) =>
-                        setUserData({ ...userData, password: e.target.value })
-                    }
-                    placeholder="Enter your password"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-                />
+        <input
+          type="password"
+          placeholder="Enter your password"
+          onChange={(e) =>
+            setUserData({ ...userData, password: e.target.value })
+          }
+          className="w-full p-3 border rounded-lg"
+        />
 
-                {/* ✅ Sign Up Button */}
-                <button
-                    type="button"
-                    onClick={handleBtn}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition active:scale-95 shadow-md"
-                >
-                    Sign Up
-                </button>
+        <button
+          onClick={handleBtn}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold"
+        >
+          Sign Up
+        </button>
 
-                {/* ✅ Redirect */}
-                <p className="text-sm text-center text-gray-600">
-                    Already have an account?{" "}
-                    <Link
-                        to="/login"
-                        className="text-blue-600 font-semibold hover:underline"
-                    >
-                        Log In
-                    </Link>
-                </p>
-            </div>
-        </div>
-    );
+        <p className="text-sm text-center text-gray-600">
+          Already have an account?{" "}
+          <Link to="/login" className="text-blue-600 font-semibold hover:underline">
+            Log In
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
 };
 
 export default SignUp;
