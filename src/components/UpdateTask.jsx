@@ -22,8 +22,9 @@ const UpdateTask = () => {
     if (res.success) {
       setTextData(res.result);
     }
+  
   };
-
+console.log(textData);
 
   const updateTask=async()=>{
       console.log(textData);

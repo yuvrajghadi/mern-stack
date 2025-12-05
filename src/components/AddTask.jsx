@@ -17,6 +17,7 @@ const AddTask = () => {
 
     let res = await fetch("http://localhost:3200/add-task", {
       method: "POST",
+            credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },

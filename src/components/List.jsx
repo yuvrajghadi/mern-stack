@@ -12,7 +12,7 @@ const List = () => {
   });
   res = await res.json();
 
-  if (res.success) {
+  if (res.message) {
     setTasks(res.result);
   }
 };
@@ -28,6 +28,7 @@ const List = () => {
 
     let item = await fetch(`http://localhost:3200/delete/${id}`, {
       method: "DELETE",
+      credentials: "include",
     });
 
     item = await item.json();
@@ -37,6 +38,8 @@ const List = () => {
       setMessage("✅ Task deleted successfully!");
 
       setTimeout(() => setMessage(""), 2000);
+    }else{
+      alert("Failed to delete the task.")
     }
   };
 
@@ -69,6 +72,7 @@ const List = () => {
 
     let item = await fetch('http://localhost:3200/delete-multiple/', {
       method: "DELETE",
+      credentials: "include",
       body: JSON.stringify(allTasks),
       headers: {
         'Content-Type': 'application/json'
@@ -82,6 +86,8 @@ const List = () => {
       setMessage("✅ Task deleted successfully!");
 
       setTimeout(() => setMessage(""), 2000);
+    }else{
+      alert("Failed to delete the task.")
     }
   };
 
