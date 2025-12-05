@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const NavBar = () => {
@@ -10,6 +11,17 @@ const NavBar = () => {
     setUser(null);                     // update UI
     navigate("/login");                // redirect
   };
+
+useEffect(()=>{
+    const handleStorageChange = () => {
+      setUser(localStorage.getItem("user"))
+    }
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    }
+},[])
 
   return (
     <nav className="bg-white border-b shadow-sm">

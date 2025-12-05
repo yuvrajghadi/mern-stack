@@ -26,6 +26,7 @@ const SignUp = () => {
         if (data.token) {
             document.cookie = 'token=' + data.token
             localStorage.setItem('user',userData.email)
+            window.dispatchEvent(new Event("storage"));
           navigate('/')
         }else{
           alert('Please enter correct details')
