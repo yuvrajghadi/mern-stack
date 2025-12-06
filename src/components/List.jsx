@@ -8,8 +8,12 @@ const List = () => {
 
   const getTask = async () => {
     let res = await fetch("https://todo-backend-rosy.vercel.app/tasks", {
-      credentials: "include",
-    });
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+    "Content-Type": "application/json",
+  },
+});
+
 
     let data = await res.json();
 

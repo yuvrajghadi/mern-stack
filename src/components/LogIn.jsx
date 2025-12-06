@@ -24,12 +24,11 @@ const Login = () => {
 
 
       let data = await res.json();
-
-      if (data.success) {
-        localStorage.setItem("user", userData.email); // ✅ only for UI
-        window.dispatchEvent(new Event("storage"));
-        navigate("/");
-      } else {
+if (data.success) {
+  localStorage.setItem("token", data.token);
+  localStorage.setItem("user", userData.email);
+  navigate("/");
+} else {
         alert("Invalid email or password");
       }
     } catch (error) {
